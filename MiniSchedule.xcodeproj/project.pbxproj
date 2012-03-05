@@ -21,6 +21,8 @@
 		D0E345001242C11E00F62197 /* MiniSchedule24x22.png in Resources */ = {isa = PBXBuildFile; fileRef = D0E344FF1242C11E00F62197 /* MiniSchedule24x22.png */; };
 		D0E345111242C28700F62197 /* MiniSchedule.icns in Resources */ = {isa = PBXBuildFile; fileRef = D0E345101242C28700F62197 /* MiniSchedule.icns */; };
 		D0E3453E1242C68D00F62197 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E3453D1242C68D00F62197 /* Carbon.framework */; };
+		D0FCEBBA150462F3006076D0 /* CHANGELOG.md in Resources */ = {isa = PBXBuildFile; fileRef = D0FCEBB8150462F3006076D0 /* CHANGELOG.md */; };
+		D0FCEBBB150462F3006076D0 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = D0FCEBB9150462F3006076D0 /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,10 +46,11 @@
 		D0A7B6C51502C3660038DD80 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Settings.xib; sourceTree = "<group>"; };
 		D0A7B6C81502C36F0038DD80 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/ScheduleWindow.xib; sourceTree = "<group>"; };
 		D0A7B6CB1502C3730038DD80 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/DateChooser.xib; sourceTree = "<group>"; };
-		D0A7B6D7150324E00038DD80 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		D0E344FF1242C11E00F62197 /* MiniSchedule24x22.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MiniSchedule24x22.png; sourceTree = "<group>"; };
 		D0E345101242C28700F62197 /* MiniSchedule.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = MiniSchedule.icns; sourceTree = "<group>"; };
 		D0E3453D1242C68D00F62197 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+		D0FCEBB8150462F3006076D0 /* CHANGELOG.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CHANGELOG.md; sourceTree = "<group>"; };
+		D0FCEBB9150462F3006076D0 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,7 +132,8 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				D0A7B6D7150324E00038DD80 /* README */,
+				D0FCEBB9150462F3006076D0 /* README.md */,
+				D0FCEBB8150462F3006076D0 /* CHANGELOG.md */,
 				D0E345101242C28700F62197 /* MiniSchedule.icns */,
 				D0E344FF1242C11E00F62197 /* MiniSchedule24x22.png */,
 				8D1107310486CEB800E47090 /* MiniSchedule-Info.plist */,
@@ -208,6 +212,8 @@
 				D0E345111242C28700F62197 /* MiniSchedule.icns in Resources */,
 				D0A7B6CA1502C3730038DD80 /* DateChooser.xib in Resources */,
 				D0A7B6C71502C36F0038DD80 /* ScheduleWindow.xib in Resources */,
+				D0FCEBBA150462F3006076D0 /* CHANGELOG.md in Resources */,
+				D0FCEBBB150462F3006076D0 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
