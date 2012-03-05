@@ -3,6 +3,7 @@
 #import <CalendarStore/CalendarStore.h>
 
 #define XOFFSET 21
+#define DEFAULT_TEXT @"No Events"
 
 @implementation ScheduleView
 
@@ -15,21 +16,42 @@
 	[super dealloc];
 }
 
-// TODO: calculate necessary width
+- (NSString *)descriptionForEvent:(CalEvent *)event {
+	static NSDateFormatter *formatter = nil;
+	if(!formatter) {
+		formatter = [[NSDateFormatter alloc] init];
+		[formatter setTimeStyle:NSDateFormatterShortStyle];
+		[formatter setDateStyle:NSDateFormatterNoStyle];
+	}
+	NSString *str;
+	if(event.isAllDay) str = event.title;
+	else str = [NSString stringWithFormat:@"%@: %@",[formatter stringFromDate:event.startDate],event.title];
+	if(event.location) str = [str stringByAppendingFormat:@" -- %@",event.location];
+	return str;
+}
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
 	if([keyPath isEqualToString:@"events"]) {
-		NSUInteger count = [[[MiniScheduleAppDelegate shared] events] count];
-		NSSize size;
+		NSArray *events = [MiniScheduleAppDelegate shared].events;
+		NSUInteger count = [events count];
+		NSSize size = {self.frame.size.width,[self itemHeight]};
 		if(count) {
-			size.width = self.frame.size.width;
 			if([self autosizesWidth]) {
-				
+				NSDictionary *textOpts = [NSDictionary dictionaryWithObjectsAndKeys:[self titleFont],NSFontAttributeName,[self titleColor],NSForegroundColorAttributeName,nil];
+				size.width = 0;
+				for(CalEvent *event in events) {
+					NSSize eventSize = [[self descriptionForEvent:event] sizeWithAttributes:textOpts];
+					if(eventSize.width > size.width) size.width = eventSize.width;
+				}
+				size.width += 2*XOFFSET;
+				if(size.width > 512) size.width = 512;
 			}
-			size.height = count * [self itemHeight];
+			size.height *= count;
 		} else {
-			count = 1;
-			size.width = self.frame.size.width;
-			size.height = [self itemHeight];
+			if([self autosizesWidth]) {
+				NSDictionary *textOpts = [NSDictionary dictionaryWithObjectsAndKeys:[self titleFont],NSFontAttributeName,[self titleColor],NSForegroundColorAttributeName,nil];
+				size.width = [DEFAULT_TEXT sizeWithAttributes:textOpts].width + 2*XOFFSET;
+			}
 		}
 		[self setFrameSize:size];
 		[self setNeedsDisplay:YES];
@@ -54,17 +76,11 @@
 }
 
 - (void)drawRect:(NSRect)dirtyRect {
-	static NSDateFormatter *formatter = nil;
     NSArray *events = [[MiniScheduleAppDelegate shared] events];
 	NSDictionary *textOpts = [NSDictionary dictionaryWithObjectsAndKeys:[self titleFont],NSFontAttributeName,[self titleColor],NSForegroundColorAttributeName,nil];
 	if([events count] == 0) {
-		[@"No Events" drawAtPoint:NSMakePoint(XOFFSET,0) withAttributes:textOpts];
+		[DEFAULT_TEXT drawAtPoint:NSMakePoint(XOFFSET,0) withAttributes:textOpts];
 		return;
-	}
-	if(!formatter) {
-		formatter = [[NSDateFormatter alloc] init];
-		[formatter setTimeStyle:NSDateFormatterShortStyle];
-		[formatter setDateStyle:NSDateFormatterNoStyle];
 	}
 	NSRect rect = self.bounds;
 	rect.size.width -= XOFFSET*2;
@@ -73,11 +89,7 @@
 	NSPoint point = (NSPoint){XOFFSET,0};
 	float height = [self itemHeight];
 	for(CalEvent *event in events) {
-		NSString *str;
-		if(event.isAllDay) str = event.title;
-		else str = [NSString stringWithFormat:@"%@: %@",[formatter stringFromDate:event.startDate],event.title];
-		if(event.location) str = [str stringByAppendingFormat:@" -- %@",event.location];
-		[str drawAtPoint:point withAttributes:textOpts];
+		[[self descriptionForEvent:event] drawAtPoint:point withAttributes:textOpts];
 		point.y += height;
 	}
 }
