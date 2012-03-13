@@ -21,8 +21,7 @@
 		D0E345001242C11E00F62197 /* MiniSchedule24x22.png in Resources */ = {isa = PBXBuildFile; fileRef = D0E344FF1242C11E00F62197 /* MiniSchedule24x22.png */; };
 		D0E345111242C28700F62197 /* MiniSchedule.icns in Resources */ = {isa = PBXBuildFile; fileRef = D0E345101242C28700F62197 /* MiniSchedule.icns */; };
 		D0E3453E1242C68D00F62197 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E3453D1242C68D00F62197 /* Carbon.framework */; };
-		D0FCEBBA150462F3006076D0 /* CHANGELOG.md in Resources */ = {isa = PBXBuildFile; fileRef = D0FCEBB8150462F3006076D0 /* CHANGELOG.md */; };
-		D0FCEBBB150462F3006076D0 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = D0FCEBB9150462F3006076D0 /* README.md */; };
+		D0FCEBBE15096106006076D0 /* com.apple.keylayout.US.charmap in Resources */ = {isa = PBXBuildFile; fileRef = D0FCEBBD15096106006076D0 /* com.apple.keylayout.US.charmap */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +50,8 @@
 		D0E3453D1242C68D00F62197 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		D0FCEBB8150462F3006076D0 /* CHANGELOG.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CHANGELOG.md; sourceTree = "<group>"; };
 		D0FCEBB9150462F3006076D0 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
+		D0FCEBBD15096106006076D0 /* com.apple.keylayout.US.charmap */ = {isa = PBXFileReference; lastKnownFileType = file; path = com.apple.keylayout.US.charmap; sourceTree = "<group>"; };
+		D0FCEBC1150EC0F5006076D0 /* Charmap Format.md */ = {isa = PBXFileReference; fileEncoding = 4; path = "Charmap Format.md"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,6 +133,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				D0FCEBBC150960DD006076D0 /* CharMaps */,
 				D0FCEBB9150462F3006076D0 /* README.md */,
 				D0FCEBB8150462F3006076D0 /* CHANGELOG.md */,
 				D0E345101242C28700F62197 /* MiniSchedule.icns */,
@@ -153,6 +155,15 @@
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D0FCEBBC150960DD006076D0 /* CharMaps */ = {
+			isa = PBXGroup;
+			children = (
+				D0FCEBBD15096106006076D0 /* com.apple.keylayout.US.charmap */,
+				D0FCEBC1150EC0F5006076D0 /* Charmap Format.md */,
+			);
+			name = CharMaps;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -212,8 +223,7 @@
 				D0E345111242C28700F62197 /* MiniSchedule.icns in Resources */,
 				D0A7B6CA1502C3730038DD80 /* DateChooser.xib in Resources */,
 				D0A7B6C71502C36F0038DD80 /* ScheduleWindow.xib in Resources */,
-				D0FCEBBA150462F3006076D0 /* CHANGELOG.md in Resources */,
-				D0FCEBBB150462F3006076D0 /* README.md in Resources */,
+				D0FCEBBE15096106006076D0 /* com.apple.keylayout.US.charmap in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
