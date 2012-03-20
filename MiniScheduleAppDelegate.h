@@ -1,4 +1,5 @@
 #import <Cocoa/Cocoa.h>
+#import "CustomDateManager.h"
 
 typedef enum {
 	Next12Hours = 0,
@@ -8,19 +9,19 @@ typedef enum {
 	Custom
 } DateType;
 
-@interface MiniScheduleAppDelegate : NSObject <NSApplicationDelegate> {
+@interface MiniScheduleAppDelegate : NSObject <NSApplicationDelegate, CustomDateManagerDelegate> {
   @private
 	IBOutlet NSWindow *window, *dateWindow, *settingsWindow;
 	IBOutlet NSMenu *statusMenu;
 	IBOutlet NSMenu *dateTypeMenu;
+	IBOutlet id dateManager;
 	NSStatusItem *status;
 	DateType dateType;
 	void *hotKey;
-	NSDate *customDate;
+	struct DateInfo customDateInfo;
 	NSMutableArray *hiddenCalendars;
 }
 
-@property (nonatomic, retain) NSDate *customDate;
 @property (nonatomic, readonly) NSArray *events, *calendars;
 
 + (MiniScheduleAppDelegate *)shared;

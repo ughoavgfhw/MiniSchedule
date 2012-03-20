@@ -1,6 +1,8 @@
 #import "MiniScheduleAppDelegate.h"
 #import <CalendarStore/CalendarStore.h>
 #import <Carbon/Carbon.h>
+#import <objc/runtime.h>
+#import "NSDate+DayTimeAdditions.h"
 
 #define DAY_SECONDS (24*60*60)
 #define KEY_EQUIVALENT_KEY @"NSUserKeyEquivalents"
@@ -64,10 +66,6 @@ void InputSourceChanged(CFNotificationCenterRef center, void *observer, CFString
 	[(id)observer rebuildCharmap];
 	[shared reloadHotkey];
 }
-
-@interface NSDate (DayStartAddition)
-- (NSDate *)dateWithTimeIntervalIntoDay:(NSTimeInterval)interval;
-@end
 
 @implementation MiniScheduleAppDelegate
 
@@ -193,7 +191,7 @@ void InputSourceChanged(CFNotificationCenterRef center, void *observer, CFString
 	return result;
 }
 
-@synthesize statusMenu, customDate, hiddenCalendars;
+@synthesize statusMenu, hiddenCalendars;
 
 + (NSSet *)keyPathsForValuesAffectingEvents {
 	return [NSSet setWithObjects:@"customDate",@"calendars",@"hiddenCalendars",@"dateType",nil];
@@ -216,7 +214,18 @@ void InputSourceChanged(CFNotificationCenterRef center, void *observer, CFString
 	[statusMenu release];
 	[status release];
 	[hiddenCalendars release];
-	[customDate release];
+	switch(customDateInfo.mode) {
+		case RelativeDateAndTime:
+			break;
+		case FixedTime:
+			[customDateInfo.fixedTime.startTime release];
+			[customDateInfo.fixedTime.endTime release];
+			break;
+		case FixedDateAndTime:
+			[customDateInfo.fixed.start release];
+			[customDateInfo.fixed.end release];
+			break;
+	}
 	[super dealloc];
 }
 
@@ -289,7 +298,6 @@ void InputSourceChanged(CFNotificationCenterRef center, void *observer, CFString
 	InstallApplicationEventHandler(NewEventHandlerUPP(HotKeyEventHandlerProc), GetEventTypeCount(hotKeyEvents), hotKeyEvents, 0, NULL);
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	[defaults registerDefaults:[NSDictionary dictionaryWithObjectsAndKeys:
-						  [[NSDate date] dateWithTimeIntervalIntoDay:0],@"CustomDate",
 						  [NSNumber numberWithInt:Next12Hours],@"DateType",
 						  [NSArray array],@"HiddenCalendars",
 						  nil]];
@@ -297,8 +305,7 @@ void InputSourceChanged(CFNotificationCenterRef center, void *observer, CFString
 	// Using instance variables directly to prevent having several change notifications
 	[hiddenCalendars release];
 	hiddenCalendars = [[defaults objectForKey:@"HiddenCalendars"] mutableCopy];
-	[customDate release];
-	customDate = [defaults objectForKey:@"CustomDate"];
+	[self unarchiveCustomDateInfo:[defaults objectForKey:@"CustomDateInfo"]];
 	// But this accessor has important side effects, so just run it last
 	self.dateType = [defaults integerForKey:@"DateType"];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(calendarsChanged:) name:CalCalendarsChangedExternallyNotification object:nil];
@@ -311,7 +318,7 @@ void InputSourceChanged(CFNotificationCenterRef center, void *observer, CFString
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-	[defaults setObject:self.customDate forKey:@"CustomDate"];
+	[defaults setObject:[self archiveCustomDateInfo] forKey:@"CustomDateInfo"];
 	[defaults setInteger:self.dateType forKey:@"DateType"];
 	[defaults setObject:self.hiddenCalendars forKey:@"HiddenCalendars"];
 	[defaults synchronize];
@@ -368,7 +375,11 @@ void InputSourceChanged(CFNotificationCenterRef center, void *observer, CFString
 		[NSBundle loadNibNamed:@"DateChooser" owner:self];
 	}
 	NSWindow *tmp = dateWindow;
+	id tmp2 = dateManager;
 	dateWindow = nil;
+	dateManager = nil;
+	// Prevent date manager from being released until after the window
+	objc_setAssociatedObject(tmp, "preventrelease", tmp2, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 	return [tmp autorelease];
 }
 
@@ -400,7 +411,7 @@ void InputSourceChanged(CFNotificationCenterRef center, void *observer, CFString
 	[self didChangeValueForKey:@"calendars"];
 }
 - (NSArray *)events {
-	NSDate *start = [NSDate date], *end;
+	NSDate *start = [NSDate date], *end = nil;
 	DateType dt = self.dateType;
 	NSTimeInterval endOffset = DAY_SECONDS;
 	if(dt == Next12Hours) endOffset = DAY_SECONDS/2;
@@ -412,11 +423,26 @@ void InputSourceChanged(CFNotificationCenterRef center, void *observer, CFString
 			start = [start dateWithTimeIntervalIntoDay:DAY_SECONDS];
 			break;
 		case Custom:
-			start = self.customDate;
+			switch(customDateInfo.mode) {
+				case RelativeDateAndTime:
+					start = [start dateByAddingTimeInterval:customDateInfo.relative.startOffset * 60];
+					endOffset = customDateInfo.relative.length * 60;
+					break;
+				case FixedTime:
+					start = [start dateWithTimeIntervalIntoDay:customDateInfo.fixedTime.startOffset * DAY_SECONDS];
+					end = [start dateByAddingTimeInterval:customDateInfo.fixedTime.length * DAY_SECONDS];
+					start = [start dateWithTimeIntoDayFromDate:customDateInfo.fixedTime.startTime];
+					end = [end dateWithTimeIntoDayFromDate:customDateInfo.fixedTime.endTime];
+					break;
+				case FixedDateAndTime:
+					start = customDateInfo.fixed.start;
+					end = customDateInfo.fixed.end;
+					break;
+			}
 			break;
 		default: break;
 	}
-	end = [start dateByAddingTimeInterval:endOffset];
+	if(!end) end = [start dateByAddingTimeInterval:endOffset];
 	CalCalendarStore *store = [CalCalendarStore defaultCalendarStore];
 	NSMutableArray *cals = [[NSMutableArray alloc] init];
 	for(CalCalendar *cal in self.calendars) {
@@ -448,15 +474,105 @@ void InputSourceChanged(CFNotificationCenterRef center, void *observer, CFString
 	}
 }
 
-@end
+- (struct DateInfo)customDateInfo {
+	struct DateInfo info = customDateInfo;
+	switch(info.mode) {
+		case RelativeDateAndTime:
+			break;
+		case FixedTime:
+			[[info.fixedTime.startTime retain] autorelease];
+			[[info.fixedTime.endTime retain] autorelease];
+			break;
+		case FixedDateAndTime:
+			[[info.fixed.start retain] autorelease];
+			[[info.fixed.end retain] autorelease];
+			break;
+	}
+	return info;
+}
+- (void)setCustomDateInfo:(struct DateInfo)dateInfo {
+	switch(customDateInfo.mode) {
+		case RelativeDateAndTime:
+			break;
+		case FixedTime:
+			[customDateInfo.fixedTime.startTime release];
+			[customDateInfo.fixedTime.endTime release];
+			break;
+		case FixedDateAndTime:
+			[customDateInfo.fixed.start release];
+			[customDateInfo.fixed.end release];
+			break;
+	}
+	customDateInfo = dateInfo;
+	switch(dateInfo.mode) {
+		case RelativeDateAndTime:
+			break;
+		case FixedTime:
+			[customDateInfo.fixedTime.startTime retain];
+			[customDateInfo.fixedTime.endTime retain];
+			break;
+		case FixedDateAndTime:
+			[customDateInfo.fixed.start retain];
+			[customDateInfo.fixed.end retain];
+			break;
+	}
+	[self eventsChanged:nil];
+}
 
-@implementation NSDate (DayStartAddition)
-
-- (NSDate *)dateWithTimeIntervalIntoDay:(NSTimeInterval)interval {
-	NSInteger tzOffset = [[NSTimeZone systemTimeZone] secondsFromGMT];
-	UInt64 date = (UInt64)[self timeIntervalSince1970];
-	date -= (date + tzOffset) % DAY_SECONDS;
-	return [NSDate dateWithTimeIntervalSince1970:date + interval];
+- (void)unarchiveCustomDateInfo:(NSData *)data {
+	struct DateInfo info;
+	if(!data) {
+		info.mode = FixedDateAndTime;
+		info.fixed.start = [[NSDate date] dateWithTimeIntervalIntoDay:0];
+		info.fixed.end = [info.fixed.start dateByAddingTimeInterval:DAY_SECONDS];
+	} else {
+		NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
+		info.mode = [unarchiver decodeIntForKey:@"mode"];
+		switch(info.mode) {
+			case RelativeDateAndTime:
+				info.relative.startOffset = [unarchiver decodeIntForKey:@"relative.startOffset"];
+				info.relative.length = [unarchiver decodeIntForKey:@"relative.length"];
+				break;
+			case FixedTime:
+				info.fixedTime.startOffset = [unarchiver decodeIntForKey:@"fixedTime.startOffset"];
+				info.fixedTime.length = [unarchiver decodeIntForKey:@"fixedTime.length"];
+				info.fixedTime.startTime = [unarchiver decodeObjectForKey:@"fixedTime.startTime"];
+				info.fixedTime.endTime = [unarchiver decodeObjectForKey:@"fixedTime.endTime"];
+				break;
+			case FixedDateAndTime:
+				info.fixed.start = [unarchiver decodeObjectForKey:@"fixed.start"];
+				info.fixed.end = [unarchiver decodeObjectForKey:@"fixed.end"];
+				break;	
+		}
+		[unarchiver finishDecoding];
+		[unarchiver release];
+	}
+	self.customDateInfo = info;
+}
+- (NSData *)archiveCustomDateInfo {
+	struct DateInfo info = self.customDateInfo;
+	NSMutableData *data = [NSMutableData data];
+	NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data];
+	[archiver encodeInt:info.mode forKey:@"mode"];
+	switch(info.mode) {
+		case RelativeDateAndTime:
+			[archiver encodeInt:info.relative.startOffset forKey:@"relative.startOffset"];
+			[archiver encodeInt:info.relative.length forKey:@"relative.length"];
+			break;
+		case FixedTime:
+			[archiver encodeInt:info.fixedTime.startOffset forKey:@"fixedTime.startOffset"];
+			[archiver encodeInt:info.fixedTime.length forKey:@"fixedTime.length"];
+			[archiver encodeObject:info.fixedTime.startTime forKey:@"fixedTime.startTime"];
+			[archiver encodeObject:info.fixedTime.endTime forKey:@"fixedTime.endTime"];
+			break;
+		case FixedDateAndTime:
+			[archiver encodeObject:info.fixed.start forKey:@"fixed.start"];
+			[archiver encodeObject:info.fixed.end forKey:@"fixed.end"];
+			break;
+	}
+	[archiver finishEncoding];
+	[archiver release];
+	return data;
 }
 
 @end

@@ -46,7 +46,7 @@
 				<int key="NSWindowStyleMask">267</int>
 				<int key="NSWindowBacking">2</int>
 				<string key="NSWindowRect">{{480, 514}, {480, 270}}</string>
-				<int key="NSWTFlags">544736256</int>
+				<int key="NSWTFlags">540541952</int>
 				<string key="NSWindowTitle">Settings</string>
 				<string key="NSWindowClass">NSWindow</string>
 				<nil key="NSViewClass"/>
@@ -73,7 +73,7 @@
 											<string key="NSFrameSize">{438, 212}</string>
 											<reference key="NSSuperview" ref="804339298"/>
 											<reference key="NSWindow"/>
-											<reference key="NSNextKeyView" ref="905002570"/>
+											<reference key="NSNextKeyView" ref="46787256"/>
 											<bool key="NSEnabled">YES</bool>
 											<object class="NSTableHeaderView" key="NSHeaderView" id="453460087">
 												<reference key="NSNextResponder" ref="46787256"/>
@@ -240,7 +240,6 @@
 									<string key="NSFrame">{{1, 119}, {223, 15}}</string>
 									<reference key="NSSuperview" ref="1048357112"/>
 									<reference key="NSWindow"/>
-									<reference key="NSNextKeyView"/>
 									<bool key="NSEnabled">YES</bool>
 									<int key="NSsFlags">1</int>
 									<reference key="NSTarget" ref="1048357112"/>
@@ -266,7 +265,7 @@
 							<string key="NSFrame">{{20, 20}, {440, 230}}</string>
 							<reference key="NSSuperview" ref="1006"/>
 							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView" ref="46787256"/>
+							<reference key="NSNextKeyView" ref="804339298"/>
 							<int key="NSsFlags">133810</int>
 							<reference key="NSVScroller" ref="905002570"/>
 							<reference key="NSHScroller" ref="764145504"/>
@@ -428,6 +427,8 @@
 					<string>-1.IBPluginDependency</string>
 					<string>-2.IBPluginDependency</string>
 					<string>-3.IBPluginDependency</string>
+					<string>1.IBNSWindowAutoPositionCentersHorizontal</string>
+					<string>1.IBNSWindowAutoPositionCentersVertical</string>
 					<string>1.IBPluginDependency</string>
 					<string>1.IBWindowTemplateEditedContentRect</string>
 					<string>1.NSWindowTemplate.visibleAtLaunch</string>
@@ -447,6 +448,8 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<boolean value="NO"/>
+					<boolean value="NO"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{788, 516}, {480, 270}}</string>
 					<boolean value="NO"/>

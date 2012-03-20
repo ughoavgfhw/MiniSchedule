@@ -21,7 +21,9 @@
 		D0E345001242C11E00F62197 /* MiniSchedule24x22.png in Resources */ = {isa = PBXBuildFile; fileRef = D0E344FF1242C11E00F62197 /* MiniSchedule24x22.png */; };
 		D0E345111242C28700F62197 /* MiniSchedule.icns in Resources */ = {isa = PBXBuildFile; fileRef = D0E345101242C28700F62197 /* MiniSchedule.icns */; };
 		D0E3453E1242C68D00F62197 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E3453D1242C68D00F62197 /* Carbon.framework */; };
+		D0EE7A761516DEFF0068D3B7 /* NSDate+DayTimeAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = D0EE7A751516DEFF0068D3B7 /* NSDate+DayTimeAdditions.m */; };
 		D0FCEBBE15096106006076D0 /* com.apple.keylayout.US.charmap in Resources */ = {isa = PBXBuildFile; fileRef = D0FCEBBD15096106006076D0 /* com.apple.keylayout.US.charmap */; };
+		D0FCEBCB151133FD006076D0 /* CustomDateManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D0FCEBCA151133FD006076D0 /* CustomDateManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,10 +50,14 @@
 		D0E344FF1242C11E00F62197 /* MiniSchedule24x22.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MiniSchedule24x22.png; sourceTree = "<group>"; };
 		D0E345101242C28700F62197 /* MiniSchedule.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = MiniSchedule.icns; sourceTree = "<group>"; };
 		D0E3453D1242C68D00F62197 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+		D0EE7A741516DEFF0068D3B7 /* NSDate+DayTimeAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+DayTimeAdditions.h"; sourceTree = "<group>"; };
+		D0EE7A751516DEFF0068D3B7 /* NSDate+DayTimeAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+DayTimeAdditions.m"; sourceTree = "<group>"; };
 		D0FCEBB8150462F3006076D0 /* CHANGELOG.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CHANGELOG.md; sourceTree = "<group>"; };
 		D0FCEBB9150462F3006076D0 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		D0FCEBBD15096106006076D0 /* com.apple.keylayout.US.charmap */ = {isa = PBXFileReference; lastKnownFileType = file; path = com.apple.keylayout.US.charmap; sourceTree = "<group>"; };
-		D0FCEBC1150EC0F5006076D0 /* Charmap Format.md */ = {isa = PBXFileReference; fileEncoding = 4; path = "Charmap Format.md"; sourceTree = "<group>"; };
+		D0FCEBC1150EC0F5006076D0 /* Charmap Format.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Charmap Format.md"; sourceTree = "<group>"; };
+		D0FCEBC9151133FD006076D0 /* CustomDateManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomDateManager.h; sourceTree = "<group>"; };
+		D0FCEBCA151133FD006076D0 /* CustomDateManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomDateManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,12 +77,16 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				D0EE7A741516DEFF0068D3B7 /* NSDate+DayTimeAdditions.h */,
+				D0EE7A751516DEFF0068D3B7 /* NSDate+DayTimeAdditions.m */,
 				256AC3D80F4B6AC300CF3369 /* MiniScheduleAppDelegate.h */,
 				256AC3D90F4B6AC300CF3369 /* MiniScheduleAppDelegate.m */,
 				D065E5E51241A7E1002CEC01 /* ScheduleView.h */,
 				D065E5E61241A7E1002CEC01 /* ScheduleView.m */,
 				D065E7071241BF86002CEC01 /* MenuScheduleView.h */,
 				D065E7081241BF86002CEC01 /* MenuScheduleView.m */,
+				D0FCEBC9151133FD006076D0 /* CustomDateManager.h */,
+				D0FCEBCA151133FD006076D0 /* CustomDateManager.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -238,6 +248,8 @@
 				256AC3DA0F4B6AC300CF3369 /* MiniScheduleAppDelegate.m in Sources */,
 				D065E5E71241A7E1002CEC01 /* ScheduleView.m in Sources */,
 				D065E7091241BF86002CEC01 /* MenuScheduleView.m in Sources */,
+				D0FCEBCB151133FD006076D0 /* CustomDateManager.m in Sources */,
+				D0EE7A761516DEFF0068D3B7 /* NSDate+DayTimeAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
