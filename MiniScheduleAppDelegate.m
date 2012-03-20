@@ -346,8 +346,14 @@ void InputSourceChanged(CFNotificationCenterRef center, void *observer, CFString
 	[NSApp activateIgnoringOtherApps:YES];
 }
 
-- (void)windowClosed:(id)sender {
-	self.window = nil;
+- (void)windowClosed:(NSNotification *)note {
+	NSWindow *win = [note object];
+	if(win == self.window)
+		self.window = nil;
+	else if(win == self.dateWindow)
+		self.dateWindow = nil;
+	else if(win == self.settingsWindow)
+		self.settingsWindow = nil;
 }
 - (void)setWindow:(NSWindow *)newWindow {
 	if(window != newWindow) {
@@ -366,36 +372,34 @@ void InputSourceChanged(CFNotificationCenterRef center, void *observer, CFString
 
 - (void)setDateWindow:(NSWindow *)w {
 	if(dateWindow != w) {
+		[[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:dateWindow];
 		[dateWindow release];
 		dateWindow = [w retain];
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowClosed:) name:NSWindowWillCloseNotification object:dateWindow];
 	}
 }
 - (NSWindow *)dateWindow {
 	if(!dateWindow) {
 		[NSBundle loadNibNamed:@"DateChooser" owner:self];
+		// Prevent date manager from being released until after the window
+		objc_setAssociatedObject(dateWindow, "preventrelease", dateManager, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 	}
-	NSWindow *tmp = dateWindow;
-	id tmp2 = dateManager;
-	dateWindow = nil;
-	dateManager = nil;
-	// Prevent date manager from being released until after the window
-	objc_setAssociatedObject(tmp, "preventrelease", tmp2, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-	return [tmp autorelease];
+	return [[dateWindow retain] autorelease];
 }
 
 - (void)setSettingsWindow:(NSWindow *)w {
 	if(settingsWindow != w) {
+		[[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:settingsWindow];
 		[settingsWindow release];
 		settingsWindow = [w retain];
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowClosed:) name:NSWindowWillCloseNotification object:settingsWindow];
 	}
 }
 - (NSWindow *)settingsWindow {
 	if(!settingsWindow) {
 		[NSBundle loadNibNamed:@"Settings" owner:self];
 	}
-	NSWindow *tmp = settingsWindow;
-	settingsWindow = nil;
-	return [tmp autorelease];
+	return [[settingsWindow retain] autorelease];
 }
 
 - (IBAction)showSettings:(id)sender {
